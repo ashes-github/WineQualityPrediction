@@ -20,6 +20,10 @@ stages:
       md5: d95c934f8546ee1bf918fafbd22bb776
       size: 952
     outs:
+    - path: artifacts/data_ingestion/data.zip
+      hash: md5
+      md5: 98e14459f9fb131cd9f83ecad4328d5d
+      size: 23329
     - path: artifacts/data_ingestion/winequality-red.csv
       hash: md5
       md5: 6a883fd98624e18c0b7ce251f4fab4fb
