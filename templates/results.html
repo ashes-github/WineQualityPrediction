@@ -1,2 +1,55 @@
-<h1>{{prediction}} </h1>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Your predicted red wine quality score.">
+  <title>Prediction Result · VintageIQ</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body>
+  <header class="site-header site-shell">
+    <a class="brand" href="{{ url_for('homePage') }}" aria-label="VintageIQ home">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M7 3h10l-1 6.2a4.05 4.05 0 0 1-8 0L7 3Z"/>
+          <path d="M12 13.2V21m-4 0h8"/>
+        </svg>
+      </span>
+      <span class="brand-copy">VintageIQ<small>Wine intelligence</small></span>
+    </a>
+    <div class="status-pill"><span class="status-dot"></span>Analysis complete</div>
+  </header>
 
+  <main class="site-shell result-page">
+    <section class="result-card" aria-labelledby="result-title">
+      <div class="result-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+          <path d="M7 3h10l-1 6.2a4.05 4.05 0 0 1-8 0L7 3Z"/>
+          <path d="M12 13.2V21m-4 0h8"/>
+        </svg>
+      </div>
+      <p class="eyebrow" style="justify-content:center">Prediction ready</p>
+      <h1 id="result-title">Your wine quality estimate</h1>
+      <p class="result-subtitle">Based on the physicochemical profile you provided.</p>
+
+      <div class="score-panel" aria-label="Predicted wine quality">
+        <span class="score-label">Predicted score</span>
+        <strong class="score-value">{{ prediction | replace('[', '') | replace(']', '') }}</strong>
+        <span class="score-scale">Wine quality score</span>
+      </div>
+
+      <p class="result-note">
+        This result is a statistical estimate from the trained model and should be
+        considered alongside sensory evaluation.
+      </p>
+      <a class="secondary-button" href="{{ url_for('homePage') }}">
+        <span aria-hidden="true">←</span>
+        Evaluate another wine
+      </a>
+    </section>
+  </main>
+
+  <footer class="site-footer site-shell">Powered by the VintageIQ wine quality model.</footer>
+</body>
+</html>

@@ -1,32 +1,204 @@
-# End to End Wine Quality Prediction Data Science Project
+# Wine Quality Prediction
 
-### Workflows--ML Pipeline
+An end-to-end red-wine quality prediction project built with ElasticNet,
+DVC, DagsHub, MLflow, and Flask.
 
-1. Data Ingestion
-2. Data Validation
-3. Data Transformation-- Feature Engineering,Data Preprocessing
-4. Model Trainer
-5. Model Evaluation- MLFLOW,Dagshub
+## Pipeline
 
-## Workflows
+```text
+Ingestion → Validation → Transformation → Training → Evaluation
+```
 
-1. Update config.yaml
-2. Update schema.yaml
-3. Update params.yaml
-4. Update the entity
-5. Update the configuration manager in src config
-6. Update the components
-7. Update the pipeline
-8. Update the main.py
+DVC versions the generated datasets, model, and metrics. DagsHub provides the
+DVC remote and MLflow experiment tracking.
 
+## Setup
+
+```powershell
+conda create --prefix ./venv python=3.11 -y
+conda activate ./venv
+python -m pip install -r requirements.txt
+python -m pip install -e .
+```
+
+For an existing clone, restore the DVC-managed artifacts:
+
+```powershell
+dvc pull
+```
+
+## DVC pipeline
+
+The repository already contains `dvc.yaml`; it normally does not need to be
+generated again. To recreate it from scratch, remove the existing stages and
+run the following commands from the project root.
+
+### Ingestion
+
+```powershell
+dvc stage add -n ingestion `
+  -d main.py -d config/config.yaml `
+  -d src/winequality/components/data_ingestion.py `
+  -d src/winequality/pipeline/data_ingestion_pipeline.py `
+  -o artifacts/data_ingestion/data.zip `
+  -o artifacts/data_ingestion/winequality-red.csv `
+  "python main.py --stages ingestion"
+```
+
+### Validation
+
+```powershell
+dvc stage add -n validation `
+  -d main.py -d config/config.yaml -d schema.yaml `
+  -d artifacts/data_ingestion/winequality-red.csv `
+  -d src/winequality/components/data_validation.py `
+  -d src/winequality/pipeline/data_validation_pipeline.py `
+  -o artifacts/data_validation/status.txt `
+  "python main.py --stages validation"
+```
+
+### Transformation
+
+```powershell
+dvc stage add -n transformation `
+  -d main.py -d config/config.yaml `
+  -d artifacts/data_ingestion/winequality-red.csv `
+  -d artifacts/data_validation/status.txt `
+  -d src/winequality/components/data_transformation.py `
+  -d src/winequality/pipeline/data_transformation_pipeline.py `
+  -o artifacts/data_transformation/train.csv `
+  -o artifacts/data_transformation/test.csv `
+  "python main.py --stages transformation"
+```
+
+### Training
+
+```powershell
+dvc stage add -n training `
+  -d main.py -d config/config.yaml -d schema.yaml `
+  -d artifacts/data_transformation/train.csv `
+  -d artifacts/data_transformation/test.csv `
+  -d src/winequality/components/model_trainer.py `
+  -d src/winequality/pipeline/model_trainer_pipeline.py `
+  -p ElasticNet.alpha -p ElasticNet.l1_ratio `
+  -o artifacts/model_trainer/model.joblib `
+  "python main.py --stages training"
+```
+
+### Evaluation
+
+```powershell
+dvc stage add -n evaluation `
+  -d main.py -d config/config.yaml -d schema.yaml `
+  -d artifacts/data_transformation/test.csv `
+  -d artifacts/model_trainer/model.joblib `
+  -d src/winequality/components/model_evaluation.py `
+  -d src/winequality/pipeline/model_evaluation_pipeline.py `
+  -p ElasticNet.alpha -p ElasticNet.l1_ratio `
+  -M artifacts/model_evaluation/metrics.json `
+  "python main.py --stages evaluation"
+```
+
+Run and inspect the pipeline:
+
+```powershell
+dvc repro
+dvc dag
+dvc metrics show
+```
+
+Push the generated artifacts to the configured DagsHub remote:
+
+```powershell
+dvc push
+git add dvc.yaml dvc.lock params.yaml
+git commit -m "Update DVC pipeline"
+git push
+```
+
+The `artifacts/` directory is excluded from Git. DagsHub may still display its
+files because DagsHub combines the Git repository with DVC-managed storage.
+
+## Direct pipeline execution
+
+Run every stage:
+
+```powershell
 python main.py --stages all
+```
 
+Run one or more selected stages:
+
+```powershell
+python main.py --stages ingestion
 python main.py --stages ingestion validation transformation
+```
 
-python main.py --stages training
+Supported stages are `ingestion`, `validation`, `transformation`, `training`,
+and `evaluation`.
 
-ingestion
-validation
-transformation
-training
-evaluation
+Use `dvc repro` when DVC caching and artifact versioning are required.
+
+## Flask application
+
+Start the application:
+
+```powershell
+python app.py
+```
+
+Open the prediction UI at `http://127.0.0.1:8080`.
+
+Run the complete training pipeline:
+
+```powershell
+Invoke-RestMethod -Method Post -Uri "http://127.0.0.1:8080/train"
+```
+
+Run one stage:
+
+```powershell
+Invoke-RestMethod -Method Post -Uri "http://127.0.0.1:8080/train/training"
+```
+
+Run selected stages:
+
+```powershell
+$body = @{ stages = @("ingestion", "validation") } | ConvertTo-Json
+
+Invoke-RestMethod `
+  -Method Post `
+  -Uri "http://127.0.0.1:8080/train" `
+  -ContentType "application/json" `
+  -Body $body
+```
+
+The Flask training endpoints call the Python pipeline directly; they do not run
+`dvc repro`.
+
+## DagsHub MLflow configuration
+
+Set these values locally or through CI secrets:
+
+```text
+MLFLOW_TRACKING_URI=https://dagshub.com/<owner>/<repository>.mlflow
+MLFLOW_TRACKING_USERNAME=<owner>
+MLFLOW_TRACKING_PASSWORD=<DagsHub access token>
+```
+
+Never commit credentials or the local `.env` file.
+
+## Development workflow
+
+When adding or modifying a pipeline stage, follow this order:
+
+1. Update `config/config.yaml`.
+2. Update `schema.yaml`, if the data schema changes.
+3. Update `params.yaml`, if model parameters change.
+4. Update the entity in `src/winequality/entity`.
+5. Update the configuration manager in `src/winequality/config`.
+6. Update the component in `src/winequality/components`.
+7. Update the pipeline wrapper in `src/winequality/pipeline`.
+8. Update the stage registration in `main.py`.
+9. Update the corresponding dependencies, parameters, and outputs in `dvc.yaml`.
+10. Run `dvc repro` and commit the updated `dvc.lock`.
