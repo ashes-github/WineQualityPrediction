@@ -18,3 +18,15 @@
 6. Update the components
 7. Update the pipeline
 8. Update the main.py
+
+python main.py --stages all
+
+python main.py --stages ingestion validation transformation
+
+python main.py --stages training
+
+ingestion
+validation
+transformation
+training
+evaluation

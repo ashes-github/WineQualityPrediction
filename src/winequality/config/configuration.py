@@ -61,7 +61,10 @@ class ConfigurationManager:
         config = self.config.data_transformation
         create_directories([config.root_dir])
         data_transformation_config = DataTransformationConfig(
-            root_dir=config.root_dir, data_path=config.data_path
+            root_dir=config.root_dir,
+            data_path=config.data_path,
+            test_size=self.params.TrainTestSplit.test_size,
+            random_state=self.params.TrainTestSplit.random_state,
         )
         return data_transformation_config
 

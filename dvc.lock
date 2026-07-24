@@ -1,0 +1,174 @@
+schema: '2.0'
+stages:
+  ingestion:
+    cmd: python main.py --stages ingestion
+    deps:
+    - path: config/config.yaml
+      hash: md5
+      md5: c0db5edd267a11490c70db15f2e70c4f
+      size: 1008
+    - path: main.py
+      hash: md5
+      md5: 34ff5eaf364094b735100ab36c29e986
+      size: 2836
+    - path: src/winequality/components/data_ingestion.py
+      hash: md5
+      md5: efab0b45510026ef9fe00083b0b06cb0
+      size: 1118
+    - path: src/winequality/pipeline/data_ingestion_pipeline.py
+      hash: md5
+      md5: d95c934f8546ee1bf918fafbd22bb776
+      size: 952
+    outs:
+    - path: artifacts/data_ingestion/winequality-red.csv
+      hash: md5
+      md5: 6a883fd98624e18c0b7ce251f4fab4fb
+      size: 100951
+  validation:
+    cmd: python main.py --stages validation
+    deps:
+    - path: artifacts/data_ingestion/winequality-red.csv
+      hash: md5
+      md5: 6a883fd98624e18c0b7ce251f4fab4fb
+      size: 100951
+    - path: config/config.yaml
+      hash: md5
+      md5: c0db5edd267a11490c70db15f2e70c4f
+      size: 1008
+    - path: main.py
+      hash: md5
+      md5: 34ff5eaf364094b735100ab36c29e986
+      size: 2836
+    - path: schema.yaml
+      hash: md5
+      md5: 7bb686b005f537e48dfb35d749fcd1ce
+      size: 331
+    - path: src/winequality/components/data_validation.py
+      hash: md5
+      md5: 8f26f4046e8fe2147361bc8c3de9dc60
+      size: 1091
+    - path: src/winequality/pipeline/data_validation_pipeline.py
+      hash: md5
+      md5: 0b7e6a74d23dcb1d3d861bd079f5921c
+      size: 929
+    outs:
+    - path: artifacts/data_validation/status.txt
+      hash: md5
+      md5: 86e6a2f694c57a675b3e2da6b95ff9ba
+      size: 23
+  transformation:
+    cmd: python main.py --stages transformation
+    deps:
+    - path: artifacts/data_ingestion/winequality-red.csv
+      hash: md5
+      md5: 6a883fd98624e18c0b7ce251f4fab4fb
+      size: 100951
+    - path: artifacts/data_validation/status.txt
+      hash: md5
+      md5: 86e6a2f694c57a675b3e2da6b95ff9ba
+      size: 23
+    - path: config/config.yaml
+      hash: md5
+      md5: c0db5edd267a11490c70db15f2e70c4f
+      size: 1008
+    - path: main.py
+      hash: md5
+      md5: 34ff5eaf364094b735100ab36c29e986
+      size: 2836
+    - path: src/winequality/components/data_transformation.py
+      hash: md5
+      md5: 14adb3a2890cf5434d4050e4ba13cff4
+      size: 1081
+    - path: src/winequality/pipeline/data_transformation_pipeline.py
+      hash: md5
+      md5: 7816d2f1b904a97e7fe38c9976e13e29
+      size: 1402
+    outs:
+    - path: artifacts/data_transformation/test.csv
+      hash: md5
+      md5: 02708e7fdb50c9cc17aa1a72b2b790ca
+      size: 19157
+    - path: artifacts/data_transformation/train.csv
+      hash: md5
+      md5: 3392df3d3fa27a10ba604052715c7f64
+      size: 76075
+  training:
+    cmd: python main.py --stages training
+    deps:
+    - path: artifacts/data_transformation/test.csv
+      hash: md5
+      md5: 02708e7fdb50c9cc17aa1a72b2b790ca
+      size: 19157
+    - path: artifacts/data_transformation/train.csv
+      hash: md5
+      md5: 3392df3d3fa27a10ba604052715c7f64
+      size: 76075
+    - path: config/config.yaml
+      hash: md5
+      md5: c0db5edd267a11490c70db15f2e70c4f
+      size: 1008
+    - path: main.py
+      hash: md5
+      md5: 34ff5eaf364094b735100ab36c29e986
+      size: 2836
+    - path: schema.yaml
+      hash: md5
+      md5: 7bb686b005f537e48dfb35d749fcd1ce
+      size: 331
+    - path: src/winequality/components/model_trainer.py
+      hash: md5
+      md5: e3882ce948003987ac800023b020f9f0
+      size: 960
+    - path: src/winequality/pipeline/model_trainer_pipeline.py
+      hash: md5
+      md5: 27a4eac8bc5295989812e93650862e1e
+      size: 904
+    params:
+      params.yaml:
+        ElasticNet.alpha: 0.2
+        ElasticNet.l1_ratio: 0.1
+    outs:
+    - path: artifacts/model_trainer/model.joblib
+      hash: md5
+      md5: bde31d1a652457ed998954395d96ae01
+      size: 1183
+  evaluation:
+    cmd: python main.py --stages evaluation
+    deps:
+    - path: artifacts/data_transformation/test.csv
+      hash: md5
+      md5: 02708e7fdb50c9cc17aa1a72b2b790ca
+      size: 19157
+    - path: artifacts/model_trainer/model.joblib
+      hash: md5
+      md5: bde31d1a652457ed998954395d96ae01
+      size: 1183
+    - path: config/config.yaml
+      hash: md5
+      md5: c0db5edd267a11490c70db15f2e70c4f
+      size: 1008
+    - path: main.py
+      hash: md5
+      md5: 34ff5eaf364094b735100ab36c29e986
+      size: 2836
+    - path: schema.yaml
+      hash: md5
+      md5: 7bb686b005f537e48dfb35d749fcd1ce
+      size: 331
+    - path: src/winequality/components/model_evaluation.py
+      hash: md5
+      md5: b2c0920bfb29e65768bb40ead9c1f653
+      size: 2499
+    - path: src/winequality/pipeline/model_evaluation_pipeline.py
+      hash: md5
+      md5: 22a0ff0f7d668f79149c101c75e8eb0b
+      size: 937
+    params:
+      params.yaml:
+        ElasticNet.alpha: 0.2
+        ElasticNet.l1_ratio: 0.1
+    outs:
+    - path: artifacts/model_evaluation/metrics.json
+      hash: md5
+      md5: 7d692e8146218a1344a81061667557c6
+      size: 99

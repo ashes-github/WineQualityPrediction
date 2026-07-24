@@ -1,5 +1,8 @@
 pandas 
 mlflow
+dvc
+dagshub
+dvc-s3
 notebook
 numpy
 scikit-learn
