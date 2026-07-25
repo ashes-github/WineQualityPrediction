@@ -14,3 +14,8 @@ __pycache__/
 *.egg-info/
 build/
 dist/
+
+# Python package/build artifacts
+*.egg-info/
+build/
+dist/

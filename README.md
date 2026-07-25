@@ -27,6 +27,21 @@ For an existing clone, restore the DVC-managed artifacts:
 dvc pull
 ```
 
+### Package setup
+
+`setup.py` defines the installable `winequality` package and its dependencies.
+Because the source code uses a `src/` layout, install the project in editable
+mode during development:
+
+```powershell
+python -m pip install -e .
+```
+
+This makes `src.winequality` imports available while keeping code changes
+immediately visible without reinstalling the package. The command may create a
+local `*.egg-info/` metadata directory; this is expected and should remain
+excluded from Git.
+
 ## DVC pipeline
 
 The repository already contains `dvc.yaml`; it normally does not need to be
