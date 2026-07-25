@@ -9,3 +9,8 @@ artifacts/
 __pycache__/
 *.py[cod]
 *$py.class
+
+# Python package/build artifacts
+*.egg-info/
+build/
+dist/
