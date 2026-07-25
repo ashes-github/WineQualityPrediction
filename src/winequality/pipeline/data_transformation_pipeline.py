@@ -1,8 +1,12 @@
-from src.winequality.config.configuration import ConfigurationManager
-from src.winequality.components.data_transformation import DataTransformation
-from src.winequality import logger
+import sys
+
+from winequality.config.configuration import ConfigurationManager
+from winequality.components.data_transformation import DataTransformation
+from winequality import logger
 
 from pathlib import Path
+
+from winequality.exception import CustomException
 
 STAGE_NAME = "Data Trnasformation Stage"
 
@@ -27,7 +31,7 @@ class DataTransformationTrainingPipeline:
                 raise Exception("Your data scheme is not valid")
 
         except Exception as e:
-            print(e)
+            raise CustomException(e, sys)
 
 
 if __name__ == "__main__":
@@ -38,4 +42,4 @@ if __name__ == "__main__":
         logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\nx==========x")
     except Exception as e:
         logger.exception(e)
-        raise e
+        raise CustomException(e, sys)

@@ -7,9 +7,9 @@ import mlflow.sklearn
 import numpy as np
 import joblib
 
-from src.winequality.entity.config_entity import ModelEvaluationConfig
-from src.winequality.constants import *
-from src.winequality.utils.common import read_yaml, create_directories, save_json
+from winequality.entity.config_entity import ModelEvaluationConfig
+from winequality.constants import *
+from winequality.utils.common import read_yaml, create_directories, save_json
 
 import os
 from dotenv import load_dotenv

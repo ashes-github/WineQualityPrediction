@@ -37,7 +37,7 @@ mode during development:
 python -m pip install -e .
 ```
 
-This makes `src.winequality` imports available while keeping code changes
+This makes `winequality` imports available while keeping code changes
 immediately visible without reinstalling the package. The command may create a
 local `*.egg-info/` metadata directory; this is expected and should remain
 excluded from Git.

@@ -2,7 +2,7 @@ from flask import Flask, jsonify, render_template, request
 import numpy as np
 
 from main import STAGES, resolve_stages, run_stage
-from src.winequality.pipeline.prediction_pipeline import PredictionPipeline
+from winequality.pipeline.prediction_pipeline import PredictionPipeline
 
 app = Flask(__name__)  # initializing a flask app
 
@@ -47,7 +47,9 @@ def _execute_training(requested):
     """Execute pipeline stages and return a consistent API response."""
     completed = []
     try:
-        invalid = [stage for stage in requested if stage != "all" and stage not in STAGES]
+        invalid = [
+            stage for stage in requested if stage != "all" and stage not in STAGES
+        ]
         if invalid:
             valid = ", ".join(["all", *STAGES])
             raise ValueError(

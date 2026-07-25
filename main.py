@@ -1,23 +1,22 @@
 import argparse
 from collections.abc import Callable
 
-from src.winequality import logger
-from src.winequality.pipeline.data_ingestion_pipeline import (
+from winequality import logger
+from winequality.pipeline.data_ingestion_pipeline import (
     DataIngestionTrainingPipeline,
 )
-from src.winequality.pipeline.data_transformation_pipeline import (
+from winequality.pipeline.data_transformation_pipeline import (
     DataTransformationTrainingPipeline,
 )
-from src.winequality.pipeline.data_validation_pipeline import (
+from winequality.pipeline.data_validation_pipeline import (
     DataValidationTrainingPipeline,
 )
-from src.winequality.pipeline.model_evaluation_pipeline import (
+from winequality.pipeline.model_evaluation_pipeline import (
     ModelEvaluationTrainingPipeline,
 )
-from src.winequality.pipeline.model_trainer_pipeline import (
+from winequality.pipeline.model_trainer_pipeline import (
     ModelTrainerTrainingPipeline,
 )
-
 
 STAGES: dict[str, tuple[str, Callable[[], None]]] = {
     "ingestion": (

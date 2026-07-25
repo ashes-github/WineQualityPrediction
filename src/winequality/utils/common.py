@@ -1,12 +1,15 @@
 import os
+import sys
 import yaml
-from src.winequality import logger
+from winequality import logger
 import json
 import joblib
 from ensure import ensure_annotations
 from box import ConfigBox
 from pathlib import Path
 from typing import Any
+
+from winequality.exception import CustomException
 from box.exceptions import BoxValueError
 
 
@@ -32,7 +35,7 @@ def read_yaml(path_to_yaml: Path) -> ConfigBox:
     except BoxValueError:
         raise ValueError("yaml file is empty")
     except Exception as e:
-        raise e
+        raise CustomException(e, sys)
 
 
 @ensure_annotations

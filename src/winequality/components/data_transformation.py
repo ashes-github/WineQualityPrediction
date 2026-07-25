@@ -1,7 +1,7 @@
 import os
-from src.winequality import logger
+from winequality import logger
 from sklearn.model_selection import train_test_split
-from src.winequality.entity.config_entity import DataTransformationConfig
+from winequality.entity.config_entity import DataTransformationConfig
 import pandas as pd
 
 

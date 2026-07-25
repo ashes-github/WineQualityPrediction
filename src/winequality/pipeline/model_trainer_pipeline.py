@@ -1,6 +1,9 @@
-from src.winequality.config.configuration import ConfigurationManager
-from src.winequality.components.model_trainer import ModelTrainer
-from src.winequality import logger
+import sys
+
+from winequality.config.configuration import ConfigurationManager
+from winequality.components.model_trainer import ModelTrainer
+from winequality import logger
+from winequality.exception import CustomException
 
 STAGE_NAME = "Model Trainer stage"
 
@@ -24,4 +27,4 @@ if __name__ == "__main__":
         logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\nx==========x")
     except Exception as e:
         logger.exception(e)
-        raise e
+        raise CustomException(e, sys)

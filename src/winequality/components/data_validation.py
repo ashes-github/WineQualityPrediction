@@ -1,8 +1,10 @@
 import os
-from src.winequality import logger
+import sys
+from winequality import logger
 import pandas as pd
 
-from src.winequality.entity.config_entity import DataValidationConfig
+from winequality.entity.config_entity import DataValidationConfig
+from winequality.exception import CustomException
 
 
 class DataValiadtion:
@@ -31,4 +33,4 @@ class DataValiadtion:
             return validation_status
 
         except Exception as e:
-            raise e
+            raise CustomException(e, sys)

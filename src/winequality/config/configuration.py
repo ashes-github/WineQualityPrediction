@@ -1,9 +1,9 @@
 import os
 
-from src.winequality.constants import *
-from src.winequality.utils.common import read_yaml, create_directories
+from winequality.constants import *
+from winequality.utils.common import read_yaml, create_directories
 
-from src.winequality.entity.config_entity import (
+from winequality.entity.config_entity import (
     DataIngestionConfig,
     DataValidationConfig,
     DataTransformationConfig,
