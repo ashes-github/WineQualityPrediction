@@ -164,6 +164,63 @@ python app.py
 
 Open the prediction UI at `http://127.0.0.1:8080`.
 
+Deployment endpoints:
+
+| Environment | URL                                                  |
+| ----------- | ---------------------------------------------------- |
+| Local       | http://127.0.0.1:8080                                |
+| Render      | https://wine-quality-prediction-latest.onrender.com/ |
+
+## Deployment Guide
+
+This project supports local, Docker, and cloud deployments.
+
+For detailed step-by-step deployment instructions, including:
+
+- Docker image creation
+- GitHub Container Registry (GHCR)
+- GitHub Actions CI/CD
+- Render Web Service deployment
+- Azure Container Registry (ACR)
+- Azure Web App deployment
+- Troubleshooting common deployment issues
+
+refer to the deployment guide maintained in the companion repository:
+
+https://github.com/ashes-github/mlproject-main
+
+The deployment workflow documented there can be reused for this project with only minor configuration changes (repository name, image name, environment variables, and model artifacts).
+
+## Docker
+
+The image includes the trained model at
+`artifacts/model_trainer/model.joblib`, so it can serve predictions immediately.
+The local `.env` file is never copied into the image; it is supplied only at
+container runtime for DagsHub/MLflow access during training.
+
+Build and run with Docker Compose:
+
+```powershell
+docker compose up --build
+```
+
+Open the prediction UI at `http://127.0.0.1:8080`. The Compose configuration
+mounts `artifacts/` and `logs/` so models produced by `/train` and application
+logs persist on the host. Stop the application with `Ctrl+C` and remove its
+container with:
+
+```powershell
+docker compose down
+```
+
+To run the image without Compose (for prediction-only use), pass MLflow
+credentials only if you intend to call a training endpoint:
+
+```powershell
+docker build -t winequalityprediction .
+docker run --rm -p 8080:8080 winequalityprediction
+```
+
 Run the complete training pipeline:
 
 ```powershell
@@ -191,6 +248,12 @@ Invoke-RestMethod `
 The Flask training endpoints call the Python pipeline directly; they do not run
 `dvc repro`.
 
+> **Note**
+>
+> When deploying to Render, the application listens on the port supplied by the
+> `PORT` environment variable. Logs are written to standard output (and optionally
+> `/tmp/logs`) to comply with container filesystem permissions.
+
 ## DagsHub MLflow configuration
 
 Set these values locally or through CI secrets:
@@ -202,6 +265,28 @@ MLFLOW_TRACKING_PASSWORD=<DagsHub access token>
 ```
 
 Never commit credentials or the local `.env` file.
+
+## CI/CD
+
+This project can be deployed using GitHub Actions.
+
+A typical deployment workflow is:
+
+```text
+Git Push
+    │
+    ▼
+GitHub Actions
+    │
+    ▼
+Build Docker Image
+    │
+    ▼
+Publish to GitHub Container Registry (GHCR)
+    │
+    ▼
+Trigger Render Deployment
+```
 
 ## Development workflow
 
