@@ -60,8 +60,7 @@ jobs:
           MLFLOW_TRACKING_USERNAME: ${{ secrets.MLFLOW_TRACKING_USERNAME }}
           MLFLOW_TRACKING_PASSWORD: ${{ secrets.MLFLOW_TRACKING_PASSWORD }}
         run: |
-          if dvc pull -r origin artifacts/model_trainer/model.joblib \
-            then
+          if dvc pull -r origin; then
             echo "Model artifacts restored from DVC remote."
           else
             echo "Model artifacts unavailable; restoring raw data and training."
