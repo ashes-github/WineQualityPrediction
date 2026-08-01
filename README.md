@@ -164,6 +164,36 @@ python app.py
 
 Open the prediction UI at `http://127.0.0.1:8080`.
 
+## Docker
+
+The image includes the trained model at
+`artifacts/model_trainer/model.joblib`, so it can serve predictions immediately.
+The local `.env` file is never copied into the image; it is supplied only at
+container runtime for DagsHub/MLflow access during training.
+
+Build and run with Docker Compose:
+
+```powershell
+docker compose up --build
+```
+
+Open the prediction UI at `http://127.0.0.1:8080`. The Compose configuration
+mounts `artifacts/` and `logs/` so models produced by `/train` and application
+logs persist on the host. Stop the application with `Ctrl+C` and remove its
+container with:
+
+```powershell
+docker compose down
+```
+
+To run the image without Compose (for prediction-only use), pass MLflow
+credentials only if you intend to call a training endpoint:
+
+```powershell
+docker build -t winequalityprediction .
+docker run --rm -p 8080:8080 winequalityprediction
+```
+
 Run the complete training pipeline:
 
 ```powershell

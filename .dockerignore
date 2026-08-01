@@ -1,0 +1,25 @@
+# Local environments and editor metadata
+venv/
+.venv/
+.vscode/
+.git/
+.github/
+.agents/
+.codex/
+
+# Runtime-only and generated files
+logs/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+research/
+
+# Do not bake credentials into the image.
+.env
+
+# Only the trained model is needed to serve predictions.
+artifacts/*
+!artifacts/model_trainer/
+!artifacts/model_trainer/model.joblib
